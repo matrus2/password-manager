@@ -19,7 +19,6 @@ public class User {
     private Date lastLogged;
 
     public User() {
-
         this.lastLogged = new Date();
     }
 
