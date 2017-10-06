@@ -55,6 +55,19 @@ public class UserController {
             userRepository.delete(user);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @PutMapping("{name}")
+    public ResponseEntity<String> changeUser(@PathVariable("name") String name, @RequestBody User user) {
+        User userDBname = userRepository.findByName(name);
+
+        if (userDBname == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        userRepository.save(user);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
 }
