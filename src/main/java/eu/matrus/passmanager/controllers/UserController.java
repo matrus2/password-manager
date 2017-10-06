@@ -21,20 +21,40 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @GetMapping("{name}")
-    public User getUser(@PathVariable("name") String name) {
-        return userRepository.findByName(name);
-    }
-
-    @PostMapping("{name}")
+    @PostMapping()
     public ResponseEntity<String> addUser(@RequestBody User user) {
-        if (userRepository.findByName(user.getName()) != null) {
-            return new ResponseEntity<>("User already exists", HttpStatus.CONFLICT);
-        } else {
+        User userDBname = userRepository.findByName(user.getName());
+        User userDBemail = userRepository.findByEmail(user.getEmail());
+        String responseBody = null;
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        if (userDBname != null) responseBody = "User with that name already exists";
+        if (userDBemail != null) responseBody = "User with that email already exists";
+        if (userDBname != null && userDBemail != null) responseBody = "User with that name and email already exists";
+
+        if (responseBody == null) {
+            status = HttpStatus.CREATED;
             userRepository.save(user);
-            return new ResponseEntity<>(HttpStatus.CREATED);
         }
+        return new ResponseEntity<>(responseBody, status);
     }
 
-    //deleteByLastname
+    @GetMapping("{name}")
+    public ResponseEntity<User> getUser(@PathVariable("name") String name) {
+        User user = userRepository.findByName(name);
+        if (user != null) {
+            return new ResponseEntity<>(user, HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping("{name}")
+    public ResponseEntity<String> deleteUser(@PathVariable("name") String name) {
+        User user = userRepository.findByName(name);
+        if (user != null) {
+            userRepository.delete(user);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 }
