@@ -14,7 +14,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @GetMapping()
     public List<User> getUsers() {
@@ -65,7 +65,7 @@ public class UserController {
         if (userDBname == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
+        user.setId(userDBname.getId());
         userRepository.save(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

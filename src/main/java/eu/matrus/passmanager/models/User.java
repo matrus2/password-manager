@@ -1,7 +1,7 @@
 package eu.matrus.passmanager.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,18 +19,17 @@ public class User {
     private String name;
     private String email;
     private String password;
+    @CreatedDate
     private Date lastLogged;
 
-    public User() {
-        this.lastLogged = new Date();
-    }
+    public User() {}
 
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.lastLogged = new Date();
     }
+
     public User(String name, String email, String password, Date lastLogged) {
         this.name = name;
         this.email = email;
