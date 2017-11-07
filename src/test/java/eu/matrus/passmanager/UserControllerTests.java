@@ -3,20 +3,20 @@ package eu.matrus.passmanager;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonBuilderFactory;
+import javax.json.JsonObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class PassmanagerApplicationTests extends TestConfigurator {
+public class UserControllerTests extends TestConfigurator {
 
     private TestRestTemplate restTemplate = new TestRestTemplate();
     private HttpHeaders headers = new HttpHeaders();
@@ -143,6 +143,57 @@ public class PassmanagerApplicationTests extends TestConfigurator {
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
+    @Test
+    public void testGetAllUsers() throws JSONException, ParseException {
+
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("/users"),
+                HttpMethod.GET, entity, String.class);
+
+        Date myDate = new SimpleDateFormat("yyyy-MM-dd").parse("2014-11-23");
+        JsonBuilderFactory factory = Json.createBuilderFactory(null);
+
+        JsonArray expected = factory.createArrayBuilder()
+                .add(factory.createObjectBuilder()
+                        .add("name", "adam")
+                        .add("email", "adam@adam.pl")
+                        .add("lastLogged", myDate.getTime())
+                        .add("password", "adamadam"))
+                .add(factory.createObjectBuilder()
+                        .add("name", "pawel")
+                        .add("email", "pawel@pawel.pl")
+                        .add("lastLogged", myDate.getTime())
+                        .add("password", "pawelpawel"))
+                .build();
+
+        JSONAssert.assertEquals(expected.toString(), response.getBody(), true);
+        Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
+    }
+
+    @Test
+    public void testDeleteSingleUserIfNotExists() {
+
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("/users/maciej"),
+                HttpMethod.DELETE, entity, String.class);
+
+        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testDeleteSingleUserIfExists() {
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("/users/adam"),
+                HttpMethod.DELETE, entity, String.class);
+
+        Assert.assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+    }
 
     private String createURLWithPort(String uri) {
         return "http://localhost:" + port + uri;

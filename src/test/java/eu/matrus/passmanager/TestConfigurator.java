@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class TestConfigurator {
 
     @Autowired

@@ -52,6 +52,11 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable("name") String name) {
         User user = userRepository.findByName(name);
         if (user != null) {
+            /*
+
+            TODO: Delete all passwords associated with the user
+
+             */
             userRepository.delete(user);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         }
