@@ -4,9 +4,10 @@ import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.boot.context.embedded.LocalServerPort;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -18,11 +19,7 @@ import java.util.Date;
 
 public class UserControllerTests extends TestConfigurator {
 
-    private TestRestTemplate restTemplate = new TestRestTemplate();
-    private HttpHeaders headers = new HttpHeaders();
-
-    @LocalServerPort
-    private String port;
+    final private static String USER_ENDPOINT = "/users/";
 
     @Test
     public void testGetSingleUserIfExists() throws JSONException, ParseException {
@@ -30,7 +27,7 @@ public class UserControllerTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/users/adam"),
+                createURLWithPort(USER_ENDPOINT + CORRECT_USER_NAME),
                 HttpMethod.GET, entity, String.class);
 
         Date myDate = new SimpleDateFormat("yyyy-MM-dd").parse("2014-11-23");
@@ -51,7 +48,7 @@ public class UserControllerTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/users/adamo"),
+                createURLWithPort(USER_ENDPOINT + USER_DOESNT_EXISTS),
                 HttpMethod.GET, entity, String.class);
         Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
@@ -69,7 +66,7 @@ public class UserControllerTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(newUser.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/users"),
+                createURLWithPort(USER_ENDPOINT),
                 HttpMethod.POST, entity, String.class);
 
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -88,7 +85,7 @@ public class UserControllerTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(newUser.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/users"),
+                createURLWithPort(USER_ENDPOINT),
                 HttpMethod.POST, entity, String.class);
 
         Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
@@ -97,7 +94,7 @@ public class UserControllerTests extends TestConfigurator {
     @Test
     public void testPutSingleUserIfExists() {
         JsonObject newData = Json.createObjectBuilder()
-                .add("name", "maciej")
+                .add("name", USER_DOESNT_EXISTS)
                 .add("email", "maciej@maciej.pl")
                 .add("password", "maciejmaciej")
                 .build();
@@ -106,20 +103,20 @@ public class UserControllerTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(newData.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/users/adam"),
+                createURLWithPort(USER_ENDPOINT + CORRECT_USER_NAME),
                 HttpMethod.PUT, entity, String.class);
 
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
         // Second call to check if there is maciej as a user
         ResponseEntity<String> responseFromMaciej = restTemplate.exchange(
-                createURLWithPort("/users/maciej"),
+                createURLWithPort(USER_ENDPOINT + USER_DOESNT_EXISTS),
                 HttpMethod.GET, null, String.class);
 
         Assert.assertEquals(HttpStatus.FOUND, responseFromMaciej.getStatusCode());
         // Third call to check if there is adam as a user
         ResponseEntity<String> responseFromAdam = restTemplate.exchange(
-                createURLWithPort("/users/adam"),
+                createURLWithPort(USER_ENDPOINT + CORRECT_USER_NAME),
                 HttpMethod.GET, null, String.class);
 
         Assert.assertEquals(HttpStatus.NOT_FOUND, responseFromAdam.getStatusCode());
@@ -128,7 +125,7 @@ public class UserControllerTests extends TestConfigurator {
     @Test
     public void testPutSingleUserIfNotExists() {
         JsonObject newData = Json.createObjectBuilder()
-                .add("name", "maciej")
+                .add("name", USER_DOESNT_EXISTS)
                 .add("email", "maciej@maciej.pl")
                 .add("password", "maciejmaciej")
                 .build();
@@ -137,7 +134,7 @@ public class UserControllerTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(newData.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/users/maciej"),
+                createURLWithPort(USER_ENDPOINT + USER_DOESNT_EXISTS),
                 HttpMethod.PUT, entity, String.class);
 
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -149,7 +146,7 @@ public class UserControllerTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/users"),
+                createURLWithPort(USER_ENDPOINT),
                 HttpMethod.GET, entity, String.class);
 
         Date myDate = new SimpleDateFormat("yyyy-MM-dd").parse("2014-11-23");
@@ -178,7 +175,7 @@ public class UserControllerTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/users/maciej"),
+                createURLWithPort(USER_ENDPOINT + USER_DOESNT_EXISTS),
                 HttpMethod.DELETE, entity, String.class);
 
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -189,14 +186,9 @@ public class UserControllerTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/users/adam"),
+                createURLWithPort(USER_ENDPOINT + CORRECT_USER_NAME),
                 HttpMethod.DELETE, entity, String.class);
 
         Assert.assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
     }
-
-    private String createURLWithPort(String uri) {
-        return "http://localhost:" + port + uri;
-    }
-
 }

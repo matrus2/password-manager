@@ -8,7 +8,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.ParseException;
@@ -17,15 +20,24 @@ import java.util.Arrays;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class TestConfigurator {
+public abstract class TestConfigurator {
 
     @Autowired
-    public UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    private PasswordRepository passwordRepository;
+    PasswordRepository passwordRepository;
+
+    TestRestTemplate restTemplate = new TestRestTemplate();
+    HttpHeaders headers = new HttpHeaders();
+
+    @LocalServerPort
+    private String port;
 
     private User adam;
     private User pawel;
+
+    final protected static String CORRECT_USER_NAME = "adam/";
+    final protected static String USER_DOESNT_EXISTS = "mateusz/";
 
     public TestConfigurator() {
         try {
@@ -54,4 +66,9 @@ public class TestConfigurator {
         passwordRepository.deleteAll();
         userRepository.deleteAll();
     }
+
+    String createURLWithPort(String uri) {
+        return "http://localhost:" + port + uri;
+    }
+
 }

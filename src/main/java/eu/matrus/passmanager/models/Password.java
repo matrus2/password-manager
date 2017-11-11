@@ -10,9 +10,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Password {
 
     @Id
-    @JsonIgnore
     private String id;
     private String name;
+    @JsonIgnore
     private String userId;
     private String login;
     private String password;
