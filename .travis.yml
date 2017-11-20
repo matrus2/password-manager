@@ -8,3 +8,7 @@ install:
 
 script:
   - ./mvnw test
+
+branches:
+  only:
+  - master

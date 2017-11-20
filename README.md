@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/matrus2/password-manager.svg?branch=master)](https://travis-ci.org/matrus2/password-manager) [![Coverage Status](https://coveralls.io/repos/github/matrus2/password-manager/badge.svg?branch=master)](https://coveralls.io/github/matrus2/password-manager?branch=master)
+
 ##Passwords and Contacts Manager
 
 To be filled up.
