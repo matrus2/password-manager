@@ -9,6 +9,9 @@ install:
 script:
   - ./mvnw test
 
+after_success:
+  - mvn jacoco:report coveralls:report
+
 branches:
   only:
   - master
