@@ -62,14 +62,10 @@ public class PasswordController {
     public ResponseEntity<String> deletePassword(@PathVariable("userName") String name, @PathVariable String passId){
         String userId = getUserIdFromName(name);
         if (userId != null) {
-            System.out.println(userId);
             List<Password> userPasswords = passRepository.findByUserId(userId);
-            System.out.println(userPasswords);
             if (!userPasswords.isEmpty()) {
                 Password toBeDeleted = userPasswords.stream().filter(password -> password.getId().equals(passId))
                         .findFirst().orElse(null);
-                System.out.println("toBeDeleted");
-                System.out.println(toBeDeleted);
                 if (toBeDeleted != null) {
                     passRepository.delete(toBeDeleted);
                     return new ResponseEntity<>(HttpStatus.ACCEPTED);
