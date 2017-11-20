@@ -9,8 +9,8 @@ To be filled up.
 - [x] Setup for integration tests
 - [x] Run tests in embedded environment
 - [x] Remaining integration tests for UserController
-- [ ] Integration tests for passwordController
-- [ ] Introduce travis CI to run tests before merge in Github
+- [x] Integration tests for passwordController
+- [x] Introduce travis CI to run tests before merge in Github
 - [ ] Controllers refactor - move logic to the respective services
 - [ ] Data validation with tests
 - [ ] Handling passwords store
