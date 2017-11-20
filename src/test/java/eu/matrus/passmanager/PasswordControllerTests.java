@@ -110,7 +110,7 @@ public class PasswordControllerTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME + userPasswords.get(1).getId()),
+                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME + "/" + userPasswords.get(1).getId()),
                 HttpMethod.DELETE, entity, String.class);
 
         Assert.assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());

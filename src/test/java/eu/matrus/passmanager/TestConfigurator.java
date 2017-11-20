@@ -36,8 +36,8 @@ public abstract class TestConfigurator {
     private User adam;
     private User pawel;
 
-    final protected static String CORRECT_USER_NAME = "adam/";
-    final protected static String USER_DOESNT_EXISTS = "mateusz/";
+    final protected static String CORRECT_USER_NAME = "adam";
+    final protected static String USER_DOESNT_EXISTS = "mateusz";
 
     public TestConfigurator() {
         try {
