@@ -3,6 +3,7 @@ package eu.matrus.passmanager;
 import eu.matrus.passmanager.models.Password;
 import eu.matrus.passmanager.models.User;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -15,6 +16,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
+import javax.validation.constraints.Null;
 import java.text.ParseException;
 import java.util.List;
 
@@ -103,8 +105,28 @@ public class PasswordControllerTests extends TestConfigurator {
     }
 
     @Test
+    public void testDeletePasswordsIfUserExist() throws JSONException {
+        User user = userRepository.findByName(CORRECT_USER_NAME);
+        List<Password> userPasswords = passwordRepository.findByUserId(user.getId());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME),
+                HttpMethod.DELETE, entity, String.class);
+
+        Assert.assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+        // Assert that there no passwords any more
+        ResponseEntity<String> responseWithPass = restTemplate.exchange(
+                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME),
+                HttpMethod.GET, entity, String.class);
+
+        JSONAssert.assertEquals("[]", responseWithPass.getBody(), false);
+    }
+
+    @Test
     public void testDeleteSinglePasswordIfUserAndPasswordExist() {
-        User user = userRepository.findByName("adam");
+        User user = userRepository.findByName(CORRECT_USER_NAME);
         List<Password> userPasswords = passwordRepository.findByUserId(user.getId());
 
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
@@ -116,15 +138,13 @@ public class PasswordControllerTests extends TestConfigurator {
         Assert.assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
     }
 
+
     @Test
     public void testDeleteSinglePasswordIfUserNotExists() {
-        User user = userRepository.findByName("adam");
-        List<Password> userPasswords = passwordRepository.findByUserId(user.getId());
-
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + USER_DOESNT_EXISTS + userPasswords.get(1).getId()),
+                createURLWithPort(PASSWORD_ENDPOINT + USER_DOESNT_EXISTS + "/itdoesntmatter"),
                 HttpMethod.DELETE, entity, String.class);
 
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -141,4 +161,37 @@ public class PasswordControllerTests extends TestConfigurator {
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
+    @Test
+    public void testPutPasswordIfUserNotExists() {
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort(PASSWORD_ENDPOINT + USER_DOESNT_EXISTS + "/itdoesntmatter"),
+                HttpMethod.PUT, entity, String.class);
+
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    public void testPutPasswordIfUserExists() throws JSONException {
+        User user = userRepository.findByName(CORRECT_USER_NAME);
+        List<Password> userPasswords = passwordRepository.findByUserId(user.getId());
+
+        JsonObject newData = Json.createObjectBuilder()
+                .add("id", userPasswords.get(1).getId())
+                .add("name", CORRECT_USER_NAME)
+                .add("userId", user.getId())
+                .add("login", "whatever")
+                .add("password", "whatever")
+                .add("url", "www.whatever.com")
+                .build();
+
+        HttpEntity<String> entity = new HttpEntity<>(newData.toString(), headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME + "/" + userPasswords.get(1).getId()),
+                HttpMethod.PUT, entity, String.class);
+
+        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
 }
