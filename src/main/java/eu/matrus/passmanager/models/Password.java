@@ -5,12 +5,15 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @Document(collection = "passwords")
 public class Password {
 
     @Id
     private String id;
+    @NotNull(message = "Name cannot be null")
     private String name;
     @JsonIgnore
     private String userId;
