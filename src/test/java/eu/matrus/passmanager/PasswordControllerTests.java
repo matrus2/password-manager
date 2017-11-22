@@ -3,7 +3,6 @@ package eu.matrus.passmanager;
 import eu.matrus.passmanager.models.Password;
 import eu.matrus.passmanager.models.User;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -16,7 +15,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
-import javax.validation.constraints.Null;
 import java.text.ParseException;
 import java.util.List;
 
@@ -61,7 +59,7 @@ public class PasswordControllerTests extends TestConfigurator {
                 createURLWithPort(PASSWORD_ENDPOINT + USER_DOESNT_EXISTS),
                 HttpMethod.GET, entity, String.class);
 
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
@@ -192,6 +190,6 @@ public class PasswordControllerTests extends TestConfigurator {
                 createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME + "/" + userPasswords.get(1).getId()),
                 HttpMethod.PUT, entity, String.class);
 
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
