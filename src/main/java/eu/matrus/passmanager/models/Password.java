@@ -30,11 +30,4 @@ public class Password {
         this.password = password;
         this.url = url;
     }
-    public Password(String name, String login, String password, String url) {
-        this.name = name;
-        this.login = login;
-        this.password = password;
-        this.url = url;
-    }
-
 }
