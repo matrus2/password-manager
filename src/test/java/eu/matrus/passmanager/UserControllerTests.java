@@ -39,7 +39,7 @@ public class UserControllerTests extends TestConfigurator {
                 .build();
 
         JSONAssert.assertEquals(expected.toString(), response.getBody(), true);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.FOUND);
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -50,7 +50,7 @@ public class UserControllerTests extends TestConfigurator {
         ResponseEntity<String> response = restTemplate.exchange(
                 createURLWithPort(USER_ENDPOINT + USER_DOESNT_EXISTS),
                 HttpMethod.GET, entity, String.class);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
@@ -113,13 +113,13 @@ public class UserControllerTests extends TestConfigurator {
                 createURLWithPort(USER_ENDPOINT + USER_DOESNT_EXISTS),
                 HttpMethod.GET, null, String.class);
 
-        Assert.assertEquals(HttpStatus.FOUND, responseFromMaciej.getStatusCode());
+        Assert.assertEquals(HttpStatus.OK, responseFromMaciej.getStatusCode());
         // Third call to check if there is adam as a user
         ResponseEntity<String> responseFromAdam = restTemplate.exchange(
                 createURLWithPort(USER_ENDPOINT + CORRECT_USER_NAME),
                 HttpMethod.GET, null, String.class);
 
-        Assert.assertEquals(HttpStatus.NOT_FOUND, responseFromAdam.getStatusCode());
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseFromAdam.getStatusCode());
     }
 
     @Test
@@ -137,7 +137,7 @@ public class UserControllerTests extends TestConfigurator {
                 createURLWithPort(USER_ENDPOINT + USER_DOESNT_EXISTS),
                 HttpMethod.PUT, entity, String.class);
 
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
@@ -178,7 +178,7 @@ public class UserControllerTests extends TestConfigurator {
                 createURLWithPort(USER_ENDPOINT + USER_DOESNT_EXISTS),
                 HttpMethod.DELETE, entity, String.class);
 
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test

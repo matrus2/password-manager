@@ -1,10 +1,8 @@
 package eu.matrus.passmanager.controllers;
 
 import eu.matrus.passmanager.models.User;
-import eu.matrus.passmanager.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import eu.matrus.passmanager.services.PasswordManagerService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,66 +11,37 @@ import java.util.List;
 @RequestMapping("users")
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private PasswordManagerService service;
+
+    public UserController(PasswordManagerService service) {
+        this.service = service;
+    }
 
     @GetMapping()
     public List<User> getUsers() {
-        return userRepository.findAll();
+        return service.getUsers();
     }
 
     @PostMapping()
-    public ResponseEntity<String> addUser(@RequestBody User user) {
-        User userDBname = userRepository.findByName(user.getName());
-        User userDBemail = userRepository.findByEmail(user.getEmail());
-        String responseBody = null;
-        HttpStatus status = HttpStatus.CONFLICT;
-
-        if (userDBname != null) responseBody = "User with that name already exists";
-        if (userDBemail != null) responseBody = "User with that email already exists";
-        if (userDBname != null && userDBemail != null) responseBody = "User with that name and email already exists";
-
-        if (responseBody == null) {
-            status = HttpStatus.CREATED;
-            userRepository.save(user);
-        }
-        return new ResponseEntity<>(responseBody, status);
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addUser(@RequestBody User user) {
+        service.addUser(user);
     }
 
     @GetMapping("{name}")
-    public ResponseEntity<User> getUser(@PathVariable("name") String name) {
-        User user = userRepository.findByName(name);
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.FOUND);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public User getUser(@PathVariable("name") String name) {
+        return service.getUser(name);
     }
 
     @DeleteMapping("{name}")
-    public ResponseEntity<String> deleteUser(@PathVariable("name") String name) {
-        User user = userRepository.findByName(name);
-        if (user != null) {
-            /*
-
-            TODO: Delete all passwords associated with the user
-
-             */
-            userRepository.delete(user);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void deleteUser(@PathVariable("name") String name) {
+        service.deleteUser(name);
     }
 
     @PutMapping("{name}")
-    public ResponseEntity<String> changeUser(@PathVariable("name") String name, @RequestBody User user) {
-        User userDBname = userRepository.findByName(name);
-
-        if (userDBname == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        user.setId(userDBname.getId());
-        userRepository.save(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public void changeUser(@PathVariable("name") String name, @RequestBody User user) {
+        service.changeUser(name, user);
     }
-
 }
