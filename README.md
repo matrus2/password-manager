@@ -13,7 +13,7 @@ To be filled up.
 - [x] Remaining integration tests for UserController
 - [x] Integration tests for passwordController
 - [x] Introduce travis CI to run tests before merge in Github
-- [ ] Controllers refactor - move logic to the respective services
+- [x] Controllers refactor - move logic to the respective services
 - [ ] Data validation with tests
 - [ ] Handling passwords store
 - [ ] Introducing token based system to retrieve data (AWS API Gateway, Spring Security)

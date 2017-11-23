@@ -11,25 +11,25 @@ public class ExceptionHandlingController {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity resourceNotFound(ResourceNotFoundException ex) {
-        ExceptionResponse response = new ExceptionResponse();
-        response.setErrorCode("Bad request");
-        response.setErrorMessage(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        String message = ex.getResourceId() + " resource not found";
+        return buildResponseEntity(new ExceptionResponse(HttpStatus.BAD_REQUEST, message, ex));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity invalidInput(MethodArgumentNotValidException ex) {
-        ExceptionResponse response = new ExceptionResponse();
-        response.setErrorCode("Validation Error");
-        response.setErrorMessage(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        ExceptionResponse apiException = new ExceptionResponse(HttpStatus.BAD_REQUEST);
+        apiException.setErrorMessage("Validation Error");
+        apiException.addValidationErrors(ex.getBindingResult().getFieldErrors());
+        apiException.addValidationError(ex.getBindingResult().getGlobalErrors());
+        return buildResponseEntity(apiException);
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity resourceExists(ResourceAlreadyExistsException ex) {
-        ExceptionResponse response = new ExceptionResponse();
-        response.setErrorCode("Conflict - Resource already exists");
-        response.setErrorMessage(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        String message = ex.getResourceId() + " resource already exists";
+        return buildResponseEntity(new ExceptionResponse(HttpStatus.CONFLICT, message, ex));
+    }
+    private ResponseEntity buildResponseEntity(ExceptionResponse exceptionResponse) {
+        return new ResponseEntity<>(exceptionResponse, exceptionResponse.getStatusCode());
     }
 }
