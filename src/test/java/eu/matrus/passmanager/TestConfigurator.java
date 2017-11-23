@@ -36,10 +36,10 @@ public abstract class TestConfigurator {
     private User adam;
     private User pawel;
 
-    final protected static String CORRECT_USER_NAME = "adam";
-    final protected static String USER_DOESNT_EXISTS = "mateusz";
+    final static String CORRECT_USER_NAME = "adam";
+    final static String USER_DOESNT_EXISTS = "mateusz";
 
-    public TestConfigurator() {
+    TestConfigurator() {
         try {
             adam = new User("adam", "adam@adam.pl", "adamadam", new SimpleDateFormat("yyyy-MM-dd").parse("2014-11-23"));
             pawel = new User("pawel", "pawel@pawel.pl", "pawelpawel", new SimpleDateFormat("yyyy-MM-dd").parse("2014-11-23"));
