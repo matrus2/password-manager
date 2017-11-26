@@ -20,8 +20,6 @@ import java.util.List;
 
 public class PasswordControllerTests extends TestConfigurator {
 
-    final private static String PASSWORD_ENDPOINT = "/passwords/";
-
 
     @Test
     public void testGetPasswordsIfUserExists() throws JSONException, ParseException {
@@ -78,6 +76,8 @@ public class PasswordControllerTests extends TestConfigurator {
         ResponseEntity<String> response = restTemplate.exchange(
                 createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME),
                 HttpMethod.POST, entity, String.class);
+
+        System.out.println(response);
 
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }

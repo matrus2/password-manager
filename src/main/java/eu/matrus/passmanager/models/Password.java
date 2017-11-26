@@ -2,10 +2,12 @@ package eu.matrus.passmanager.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Data
 @Document(collection = "passwords")
@@ -13,15 +15,27 @@ public class Password {
 
     @Id
     private String id;
-    @NotNull(message = "Name cannot be null")
+
+    @NotEmpty
+    @Size(max = 60, message = "Name cannot be null and exceeds 60 chars")
     private String name;
+
     @JsonIgnore
     private String userId;
+
+    @NotEmpty
+    @Size(max = 60, message = "Login cannot be null and exceeds 60 chars")
     private String login;
+
+    @NotEmpty
+    @Size(max = 60, message = "Password cannot be null and exceeds 60 chars")
     private String password;
+
+    @URL(message = "Url must be valid")
     private String url;
 
-    public Password(){}
+    public Password() {
+    }
 
     public Password(String name, String userId, String login, String password, String url) {
         this.name = name;

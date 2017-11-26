@@ -26,18 +26,18 @@ public abstract class TestConfigurator {
     UserRepository userRepository;
     @Autowired
     PasswordRepository passwordRepository;
-
     TestRestTemplate restTemplate = new TestRestTemplate();
     HttpHeaders headers = new HttpHeaders();
-
     @LocalServerPort
     private String port;
-
     private User adam;
     private User pawel;
 
     final static String CORRECT_USER_NAME = "adam";
     final static String USER_DOESNT_EXISTS = "mateusz";
+    final static String PASSWORD_ENDPOINT = "/passwords/";
+    final static String USER_ENDPOINT = "/users/";
+
 
     TestConfigurator() {
         try {
