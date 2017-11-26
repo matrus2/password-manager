@@ -20,7 +20,6 @@ public class ExceptionHandlingController {
         ExceptionResponse apiException = new ExceptionResponse(HttpStatus.BAD_REQUEST);
         apiException.setErrorMessage("Validation Error");
         apiException.addValidationErrors(ex.getBindingResult().getFieldErrors());
-        apiException.addValidationError(ex.getBindingResult().getGlobalErrors());
         return buildResponseEntity(apiException);
     }
 
@@ -29,6 +28,7 @@ public class ExceptionHandlingController {
         String message = ex.getResourceId() + " resource already exists";
         return buildResponseEntity(new ExceptionResponse(HttpStatus.CONFLICT, message, ex));
     }
+
     private ResponseEntity buildResponseEntity(ExceptionResponse exceptionResponse) {
         return new ResponseEntity<>(exceptionResponse, exceptionResponse.getStatusCode());
     }

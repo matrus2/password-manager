@@ -1,9 +1,9 @@
 package eu.matrus.passmanager.exceptions;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
 public class ResourceAlreadyExistsException extends RuntimeException {
+    @Getter
     private String resourceId;
 
     public ResourceAlreadyExistsException(String resourceId, String message) {
