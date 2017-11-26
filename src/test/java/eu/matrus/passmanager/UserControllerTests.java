@@ -19,8 +19,6 @@ import java.util.Date;
 
 public class UserControllerTests extends TestConfigurator {
 
-    final private static String USER_ENDPOINT = "/users/";
-
     @Test
     public void testGetSingleUserIfExists() throws JSONException, ParseException {
 
@@ -35,7 +33,7 @@ public class UserControllerTests extends TestConfigurator {
                 .add("name", "adam")
                 .add("email", "adam@adam.pl")
                 .add("password", "adamadam")
-                .add("lastLogged", myDate.getTime())
+                .add("createdDate", myDate.getTime())
                 .build();
 
         JSONAssert.assertEquals(expected.toString(), response.getBody(), true);
@@ -156,12 +154,12 @@ public class UserControllerTests extends TestConfigurator {
                 .add(factory.createObjectBuilder()
                         .add("name", "adam")
                         .add("email", "adam@adam.pl")
-                        .add("lastLogged", myDate.getTime())
+                        .add("createdDate", myDate.getTime())
                         .add("password", "adamadam"))
                 .add(factory.createObjectBuilder()
                         .add("name", "pawel")
                         .add("email", "pawel@pawel.pl")
-                        .add("lastLogged", myDate.getTime())
+                        .add("createdDate", myDate.getTime())
                         .add("password", "pawelpawel"))
                 .build();
 

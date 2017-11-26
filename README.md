@@ -14,7 +14,8 @@ To be filled up.
 - [x] Integration tests for passwordController
 - [x] Introduce travis CI to run tests before merge in Github
 - [x] Controllers refactor - move logic to the respective services
-- [ ] Data validation with tests
+- [x] Data validation with tests
+- [ ] Handle PUT methods correctly
 - [ ] Handling passwords store
 - [ ] Introducing token based system to retrieve data (AWS API Gateway, Spring Security)
 - [ ] Cloud deployement setup
