@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class PassmanagerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(PassmanagerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(PassmanagerApplication.class, args);
+    }
 }

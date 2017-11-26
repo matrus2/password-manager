@@ -5,6 +5,7 @@ import eu.matrus.passmanager.services.PasswordManagerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ public class UserController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public void addUser(@RequestBody User user) {
+    public void addUser(@Valid @RequestBody User user) {
         service.addUser(user);
     }
 

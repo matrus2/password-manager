@@ -6,21 +6,6 @@ package eu.matrus.passmanager;
 
 */
 
-import eu.matrus.passmanager.models.Password;
-import eu.matrus.passmanager.models.User;
-import eu.matrus.passmanager.repositories.PasswordRepository;
-import eu.matrus.passmanager.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-
 //@Component
 //public class DataGenerator implements CommandLineRunner{
 //
