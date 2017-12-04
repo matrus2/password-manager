@@ -32,6 +32,7 @@ public class User {
     @Size(min = 7, max = 60, message = "Password must have more then 7 chars and less then 60 chars")
     private String password;
 
+    @JsonIgnore
     @CreatedDate
     private Date createdDate;
 

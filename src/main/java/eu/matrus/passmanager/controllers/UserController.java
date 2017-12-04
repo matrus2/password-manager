@@ -41,8 +41,8 @@ public class UserController {
     }
 
     @PutMapping("{name}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void changeUser(@PathVariable("name") String name, @RequestBody User user) {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void changeUser(@PathVariable("name") String name, @Valid @RequestBody User user) {
         service.changeUser(name, user);
     }
 }
