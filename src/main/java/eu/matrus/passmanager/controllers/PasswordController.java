@@ -42,7 +42,7 @@ public class PasswordController {
     }
 
     @PutMapping("{passId}")
-    public void changePassword(@PathVariable("userName") String name, @PathVariable String passId) {
-        service.changePassword(name, passId);
+    public void changePassword(@PathVariable("userName") String name, @PathVariable String passId, @Valid @RequestBody Password password) {
+        service.changePassword(name, passId, password);
     }
 }

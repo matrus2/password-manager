@@ -22,36 +22,33 @@ public class PasswordManagerService {
     }
 
     public List<Password> retrievePasswordsForUserName(String userName) {
-        String id = getUserFromName(userName).getId();
-        return passRepository.findByUserId(id);
+        checkIfUserExists(userName);
+        return passRepository.findByUserName(userName);
     }
 
     public void addNewPassword(String userName, Password password) {
-        String id = getUserFromName(userName).getId();
-        password.setUserId(id);
+        checkIfUserExists(userName);
+        password.setUserName(userName);
         passRepository.save(password);
     }
 
     public void deletePasswords(String userName) {
-        String userId = getUserFromName(userName).getId();
-        deletePasswordsByUserId(userId);
+        checkIfUserExists(userName);
+        List<Password> passwords = passRepository.findByUserName(userName);
+        passRepository.delete(passwords);
     }
 
     public void deleteSinglePassword(String userName, String passId) {
-        String userId = getUserFromName(userName).getId();
-        List<Password> userPasswords = getPasswordsForUser(userId);
-        Password toBeDeleted = userPasswords.stream().filter(password -> password.getId().equals(passId))
-                .findFirst().orElse(null);
-        if (toBeDeleted == null) {
-            throw new ResourceNotFoundException(passId, "Password to be deleted not found");
-        }
-        passRepository.delete(toBeDeleted);
+        checkIfUserExists(userName);
+        Password password = getPassword(userName, passId);
+        passRepository.delete(password);
     }
 
-    public void changePassword(String userName, String passId) {
-        String userId = getUserFromName(userName).getId();
-        Password password = getPassword(passId);
-        password.setUserId(userId);
+    public void changePassword(String userName, String passId, Password password) {
+        checkIfUserExists(userName);
+        Password passwordDB = getPassword(userName, passId);
+        password.setId(passwordDB.getId());
+        password.setUserName(passwordDB.getUserName());
         passRepository.save(password);
     }
 
@@ -77,27 +74,17 @@ public class PasswordManagerService {
 
     public void deleteUser(String userName) {
         User user = getUserFromName(userName);
-        deletePasswordsByUserId(user.getId());
+        List<Password> passwords = passRepository.findByUserName(userName);
+        passRepository.delete(passwords);
         userRepository.delete(user);
     }
 
     public void changeUser(String userName, User user) {
         User userDBname = getUserFromName(userName);
+        // Do not change the id, created date and user name
         user.setId(userDBname.getId());
+        user.setCreatedDate(userDBname.getCreatedDate());
         userRepository.save(user);
-    }
-
-    private void deletePasswordsByUserId(String userId) {
-        List<Password> userPasswords = getPasswordsForUser(userId);
-        passRepository.delete(userPasswords);
-    }
-
-    private List<Password> getPasswordsForUser(String userId) {
-        List<Password> userPasswords = passRepository.findByUserId(userId);
-        if (userPasswords.isEmpty()) {
-            throw new ResourceNotFoundException(userId, "Passwords for the user not found");
-        }
-        return userPasswords;
     }
 
     private User getUserFromName(String name) {
@@ -108,12 +95,19 @@ public class PasswordManagerService {
         return user;
     }
 
-    private Password getPassword(String passId) {
-        Password password = passRepository.findById(passId);
+    private Password getPassword(String userName, String passId) {
+        Password password = passRepository.findByUserNameAndId(userName, passId);
         if (password == null) {
-            throw new ResourceNotFoundException(passId, "User not found");
+            throw new ResourceNotFoundException(passId, "Password to be deleted not found");
         }
         return password;
     }
 
+    private void checkIfUserExists(String userName) {
+        // TODO: Remove when user authentication is handled
+        User user = userRepository.findByName(userName);
+        if (user == null) {
+            throw new ResourceNotFoundException(userName, "User not found");
+        }
+    }
 }

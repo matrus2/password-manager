@@ -22,22 +22,20 @@ import java.util.Arrays;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public abstract class TestConfigurator {
 
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    PasswordRepository passwordRepository;
+    @Autowired UserRepository userRepository;
+    @Autowired PasswordRepository passwordRepository;
+
     TestRestTemplate restTemplate = new TestRestTemplate();
     HttpHeaders headers = new HttpHeaders();
-    @LocalServerPort
-    private String port;
-    private User adam;
-    private User pawel;
 
     final static String CORRECT_USER_NAME = "adam";
     final static String USER_DOESNT_EXISTS = "mateusz";
     final static String PASSWORD_ENDPOINT = "/passwords/";
     final static String USER_ENDPOINT = "/users/";
 
+    @LocalServerPort private String port;
+    private User adam;
+    private User pawel;
 
     TestConfigurator() {
         try {
@@ -56,8 +54,8 @@ public abstract class TestConfigurator {
 
     private void saveUser(User user) {
         userRepository.save(user);
-        Password olx = new Password("olx", user.getId(), "test", "test1", "http://olx.pl");
-        Password allegro = new Password("allegro", user.getId(), "test", "test1", "http://allegro.pl");
+        Password olx = new Password("olx", user.getName(), "test", "test1", "http://olx.pl");
+        Password allegro = new Password("allegro", user.getName(), "test", "test1", "http://allegro.pl");
         passwordRepository.save(Arrays.asList(olx, allegro));
     }
 
@@ -70,5 +68,4 @@ public abstract class TestConfigurator {
     String createURLWithPort(String uri) {
         return "http://localhost:" + port + uri;
     }
-
 }
