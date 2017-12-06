@@ -20,7 +20,7 @@ import java.util.Date;
 public class UserControllerTests extends TestConfigurator {
 
     @Test
-    public void testGetSingleUserIfExists() throws JSONException, ParseException {
+    public void testGetSingleUserIfExists() throws JSONException {
 
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
@@ -28,12 +28,10 @@ public class UserControllerTests extends TestConfigurator {
                 createURLWithPort(USER_ENDPOINT + CORRECT_USER_NAME),
                 HttpMethod.GET, entity, String.class);
 
-        Date myDate = new SimpleDateFormat("yyyy-MM-dd").parse("2014-11-23");
         JsonObject expected = Json.createObjectBuilder()
                 .add("name", "adam")
                 .add("email", "adam@adam.pl")
                 .add("password", "adamadam")
-                .add("createdDate", myDate.getTime())
                 .build();
 
         JSONAssert.assertEquals(expected.toString(), response.getBody(), true);
@@ -74,7 +72,7 @@ public class UserControllerTests extends TestConfigurator {
     public void testPostSingleUserIfExists() {
 
         JsonObject newUser = Json.createObjectBuilder()
-                .add("name", "adam")
+                .add("name", CORRECT_USER_NAME)
                 .add("email", "maciej@maciej.pl")
                 .add("password", "maciejmaciej")
                 .build();
@@ -104,7 +102,7 @@ public class UserControllerTests extends TestConfigurator {
                 createURLWithPort(USER_ENDPOINT + CORRECT_USER_NAME),
                 HttpMethod.PUT, entity, String.class);
 
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
 
         // Second call to check if there is maciej as a user
         ResponseEntity<String> responseFromMaciej = restTemplate.exchange(
@@ -139,7 +137,7 @@ public class UserControllerTests extends TestConfigurator {
     }
 
     @Test
-    public void testGetAllUsers() throws JSONException, ParseException {
+    public void testGetAllUsers() throws JSONException {
 
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
@@ -147,19 +145,16 @@ public class UserControllerTests extends TestConfigurator {
                 createURLWithPort(USER_ENDPOINT),
                 HttpMethod.GET, entity, String.class);
 
-        Date myDate = new SimpleDateFormat("yyyy-MM-dd").parse("2014-11-23");
         JsonBuilderFactory factory = Json.createBuilderFactory(null);
 
         JsonArray expected = factory.createArrayBuilder()
                 .add(factory.createObjectBuilder()
                         .add("name", "adam")
                         .add("email", "adam@adam.pl")
-                        .add("createdDate", myDate.getTime())
                         .add("password", "adamadam"))
                 .add(factory.createObjectBuilder()
                         .add("name", "pawel")
                         .add("email", "pawel@pawel.pl")
-                        .add("createdDate", myDate.getTime())
                         .add("password", "pawelpawel"))
                 .build();
 

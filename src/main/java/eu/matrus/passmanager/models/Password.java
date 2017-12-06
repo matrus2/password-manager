@@ -16,19 +16,19 @@ public class Password {
     @Id
     private String id;
 
-    @NotEmpty
-    @Size(max = 60, message = "Name cannot be null and exceeds 60 chars")
+    @NotEmpty(message = "Name cannot be null")
+    @Size(max = 60, message = "Name cannot exceed 60 chars")
     private String name;
 
     @JsonIgnore
-    private String userId;
+    private String userName;
 
-    @NotEmpty
-    @Size(max = 60, message = "Login cannot be null and exceeds 60 chars")
+    @NotEmpty(message = "Login cannot be null")
+    @Size(max = 60, message = "Login cannot exceed 60 chars")
     private String login;
 
-    @NotEmpty
-    @Size(max = 60, message = "Password cannot be null and exceeds 60 chars")
+    @NotEmpty(message = "Password cannot be null")
+    @Size(max = 60, message = "Password cannot exceed 60 chars")
     private String password;
 
     @URL(message = "Url must be valid")
@@ -37,9 +37,9 @@ public class Password {
     public Password() {
     }
 
-    public Password(String name, String userId, String login, String password, String url) {
+    public Password(String name, String userName, String login, String password, String url) {
         this.name = name;
-        this.userId = userId;
+        this.userName = userName;
         this.login = login;
         this.password = password;
         this.url = url;
