@@ -1,8 +1,10 @@
 package eu.matrus.passmanager.controllers;
 
 import eu.matrus.passmanager.models.User;
-import eu.matrus.passmanager.services.PasswordManagerService;
+import eu.matrus.passmanager.services.DataManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -12,37 +14,41 @@ import java.util.List;
 @RequestMapping("users")
 public class UserController {
 
-    private PasswordManagerService service;
+    private DataManagerService dataService;
 
-    public UserController(PasswordManagerService service) {
-        this.service = service;
+    @Autowired
+    public UserController(DataManagerService dataService) {
+        this.dataService = dataService;
     }
 
     @GetMapping()
     public List<User> getUsers() {
-        return service.getUsers();
+        return dataService.getUsers();
     }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public void addUser(@Valid @RequestBody User user) {
-        service.addUser(user);
+        dataService.addUser(user);
     }
 
     @GetMapping("{name}")
+    @PreAuthorize("#name == authentication.name")
     public User getUser(@PathVariable("name") String name) {
-        return service.getUser(name);
+        return dataService.getUser(name);
     }
 
     @DeleteMapping("{name}")
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @PreAuthorize("#name == authentication.name")
     public void deleteUser(@PathVariable("name") String name) {
-        service.deleteUser(name);
+        dataService.deleteUser(name);
     }
 
     @PutMapping("{name}")
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @PreAuthorize("#name == authentication.name")
     public void changeUser(@PathVariable("name") String name, @Valid @RequestBody User user) {
-        service.changeUser(name, user);
+        dataService.changeUser(name, user);
     }
 }
