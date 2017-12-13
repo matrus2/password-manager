@@ -6,17 +6,19 @@ import eu.matrus.passmanager.models.Password;
 import eu.matrus.passmanager.models.User;
 import eu.matrus.passmanager.repositories.PasswordRepository;
 import eu.matrus.passmanager.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PasswordManagerService {
+public class DataManagerService {
 
     private final PasswordRepository passRepository;
     private final UserRepository userRepository;
 
-    public PasswordManagerService(PasswordRepository passRepository, UserRepository userRepository) {
+    @Autowired
+    public DataManagerService(PasswordRepository passRepository, UserRepository userRepository) {
         this.passRepository = passRepository;
         this.userRepository = userRepository;
     }

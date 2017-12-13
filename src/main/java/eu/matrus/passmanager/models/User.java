@@ -17,7 +17,7 @@ import java.util.Date;
 
 @Data
 @Document(collection = "users")
-public class User implements UserDetails{
+public class User implements UserDetails {
     @Id
     @JsonIgnore
     private String id;
