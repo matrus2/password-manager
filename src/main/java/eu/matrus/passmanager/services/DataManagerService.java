@@ -7,6 +7,7 @@ import eu.matrus.passmanager.models.User;
 import eu.matrus.passmanager.repositories.PasswordRepository;
 import eu.matrus.passmanager.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +17,13 @@ public class DataManagerService {
 
     private final PasswordRepository passRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public DataManagerService(PasswordRepository passRepository, UserRepository userRepository) {
+    public DataManagerService(PasswordRepository passRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.passRepository = passRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Password> retrievePasswordsForUserName(String userName) {
@@ -67,6 +70,7 @@ public class DataManagerService {
         if (userDBemail != null) {
             throw new ResourceAlreadyExistsException(user.getEmail(), "User with this email already exists");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
