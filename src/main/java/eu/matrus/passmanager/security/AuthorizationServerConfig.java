@@ -2,6 +2,7 @@ package eu.matrus.passmanager.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -21,6 +22,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
+
+    @Value("${security.oauth2.client.client-id}")
+    private String clientId;
+
+    @Value("${security.oauth2.client.client-secret}")
+    private String secret;
+
 
     @Autowired
     @Lazy
@@ -47,11 +55,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         int refreshTokenValiditySeconds = 30000;
         clients
                 .inMemory()
-                .withClient("trusted-app")
+                .withClient(clientId)
                 .authorizedGrantTypes("client_credentials", "password", "refresh_token")
                 .scopes("read", "write")
                 .accessTokenValiditySeconds(accessTokenValiditySeconds)
                 .refreshTokenValiditySeconds(refreshTokenValiditySeconds)
-                .secret("secret");
+                .secret(secret);
     }
 }
