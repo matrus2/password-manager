@@ -22,6 +22,7 @@ public class UserController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<User> getUsers() {
         return dataService.getUsers();
     }
@@ -33,21 +34,21 @@ public class UserController {
     }
 
     @GetMapping("{name}")
-    @PreAuthorize("#name == authentication.name")
+    @PreAuthorize("#name == authentication.name OR hasAuthority('ADMIN')")
     public User getUser(@PathVariable("name") String name) {
         return dataService.getUser(name);
     }
 
     @DeleteMapping("{name}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @PreAuthorize("#name == authentication.name")
+    @PreAuthorize("#name == authentication.name OR hasAuthority('ADMIN')")
     public void deleteUser(@PathVariable("name") String name) {
         dataService.deleteUser(name);
     }
 
     @PutMapping("{name}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @PreAuthorize("#name == authentication.name")
+    @PreAuthorize("#name == authentication.name OR hasAuthority('ADMIN')")
     public void changeUser(@PathVariable("name") String name, @Valid @RequestBody User user) {
         dataService.changeUser(name, user);
     }

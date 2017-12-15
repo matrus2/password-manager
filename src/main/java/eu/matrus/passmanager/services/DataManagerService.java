@@ -2,6 +2,7 @@ package eu.matrus.passmanager.services;
 
 import eu.matrus.passmanager.exceptions.ResourceAlreadyExistsException;
 import eu.matrus.passmanager.exceptions.ResourceNotFoundException;
+import eu.matrus.passmanager.models.Authorities;
 import eu.matrus.passmanager.models.Password;
 import eu.matrus.passmanager.models.User;
 import eu.matrus.passmanager.repositories.PasswordRepository;
@@ -71,6 +72,7 @@ public class DataManagerService {
             throw new ResourceAlreadyExistsException(user.getEmail(), "User with this email already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setAuthority(Authorities.USER.toString());
         userRepository.save(user);
     }
 

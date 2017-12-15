@@ -9,9 +9,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -39,6 +41,8 @@ public class User implements UserDetails {
     @CreatedDate
     private Date createdDate;
 
+    private Collection<GrantedAuthority> authorities = new ArrayList<>();
+
     public User() {
     }
 
@@ -49,9 +53,13 @@ public class User implements UserDetails {
         this.createdDate = createdDate;
     }
 
+    public void setAuthority(String a) {
+        authorities.add(new SimpleGrantedAuthority(a));
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     @Override
