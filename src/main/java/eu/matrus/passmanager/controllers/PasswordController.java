@@ -22,7 +22,7 @@ public class PasswordController {
     }
 
     @GetMapping()
-    @PreAuthorize("#name == authentication.name")
+    @PreAuthorize("#name == authentication.name OR hasAuthority('ADMIN')")
     public List<Password> getPasswords(@PathVariable("userName") String name) {
         return service.retrievePasswordsForUserName(name);
     }
@@ -36,20 +36,20 @@ public class PasswordController {
 
     @DeleteMapping()
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @PreAuthorize("#name == authentication.name")
+    @PreAuthorize("#name == authentication.name OR hasAuthority('ADMIN')")
     public void deletePasswords(@PathVariable("userName") String name) {
         service.deletePasswords(name);
     }
 
     @DeleteMapping("{passId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @PreAuthorize("#name == authentication.name")
+    @PreAuthorize("#name == authentication.name OR hasAuthority('ADMIN')")
     public void deleteSinglePassword(@PathVariable("userName") String name, @PathVariable String passId) {
         service.deleteSinglePassword(name, passId);
     }
 
     @PutMapping("{passId}")
-    @PreAuthorize("#name == authentication.name")
+    @PreAuthorize("#name == authentication.name OR hasAuthority('ADMIN')")
     public void changePassword(@PathVariable("userName") String name, @PathVariable String passId, @Valid @RequestBody Password password) {
         service.changePassword(name, passId, password);
     }
