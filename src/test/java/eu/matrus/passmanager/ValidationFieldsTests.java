@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -22,7 +23,9 @@ public class ValidationFieldsTests extends TestConfigurator {
     private final static String ERROR_MESSAGE = "Validation Error";
 
     @Test
-    public void testPostPasswordName() throws JSONException {
+    public void testPostPasswordName() throws JSONException, IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
         JsonObject newPassword = Json.createObjectBuilder()
                 .add("name", "")
                 .add("login", "test")
@@ -34,7 +37,7 @@ public class ValidationFieldsTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(newPassword.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userStandardName),
                 HttpMethod.POST, entity, String.class);
 
         JSONObject json = new JSONObject(response.getBody());
@@ -43,8 +46,10 @@ public class ValidationFieldsTests extends TestConfigurator {
     }
 
     @Test
-    public void testPostPasswordUrl() {
-        List<String> urlsToCheck = Arrays.asList("asd","gumtree.pl", "asd@asd.pl","as://asd");
+    public void testPostPasswordUrl() throws IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
+        List<String> urlsToCheck = Arrays.asList("asd", "gumtree.pl", "asd@asd.pl", "as://asd");
         urlsToCheck.forEach(this::testWrongUrl);
     }
 
@@ -60,14 +65,16 @@ public class ValidationFieldsTests extends TestConfigurator {
         HttpEntity<String> entity = new HttpEntity<>(newPasswordwithWrongUrl.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userStandardName),
                 HttpMethod.POST, entity, String.class);
 
         Assert.assertEquals("Bad Request", HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    public void testPostUserName() throws ParseException, JSONException {
+    public void testPostUserName() throws ParseException, JSONException, IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
         Date myDate = new SimpleDateFormat("yyyy-MM-dd").parse("2014-11-23");
         JsonObject newUser = Json.createObjectBuilder()
                 .add("name", "")
@@ -90,12 +97,14 @@ public class ValidationFieldsTests extends TestConfigurator {
     }
 
     @Test
-    public void testPostUserPassword() {
+    public void testPostUserPassword() throws IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
         List<String> passwordsToCheck = Arrays.asList("", "asdasd", "asdasdasdasdasdasdasdsadasdasdasdasdasdasdasdasdasdasdasdasdasd");
         passwordsToCheck.forEach(password -> {
             try {
                 testWrongPassword(password);
-            } catch (ParseException | JSONException e){
+            } catch (ParseException | JSONException e) {
                 e.printStackTrace();
             }
         });
@@ -124,12 +133,14 @@ public class ValidationFieldsTests extends TestConfigurator {
     }
 
     @Test
-    public void testPostUserEmail() {
-        List<String> emailsToCheck = Arrays.asList("","ads@dfg.", "@a.pl", "asda");
+    public void testPostUserEmail() throws IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
+        List<String> emailsToCheck = Arrays.asList("", "ads@dfg.", "@a.pl", "asda");
         emailsToCheck.forEach(email -> {
             try {
                 testWrongEmail(email);
-            } catch (ParseException | JSONException e){
+            } catch (ParseException | JSONException e) {
                 e.printStackTrace();
             }
         });
@@ -155,21 +166,4 @@ public class ValidationFieldsTests extends TestConfigurator {
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         Assert.assertEquals(ERROR_MESSAGE, json.get("errorMessage"));
     }
-
-    @Test
-    public void testPutPasswordName() {
-    }
-
-    @Test
-    public void testPutPasswordUrl() {
-    }
-
-    @Test
-    public void testPutUserName() {
-    }
-
-    @Test
-    public void testPutUserEmail() {
-    }
-
 }

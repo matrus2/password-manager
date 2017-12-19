@@ -2,23 +2,29 @@ package eu.matrus.passmanager.services;
 
 import eu.matrus.passmanager.exceptions.ResourceAlreadyExistsException;
 import eu.matrus.passmanager.exceptions.ResourceNotFoundException;
+import eu.matrus.passmanager.models.Authorities;
 import eu.matrus.passmanager.models.Password;
 import eu.matrus.passmanager.models.User;
 import eu.matrus.passmanager.repositories.PasswordRepository;
 import eu.matrus.passmanager.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PasswordManagerService {
+public class DataManagerService {
 
     private final PasswordRepository passRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public PasswordManagerService(PasswordRepository passRepository, UserRepository userRepository) {
+    @Autowired
+    public DataManagerService(PasswordRepository passRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.passRepository = passRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Password> retrievePasswordsForUserName(String userName) {
@@ -57,14 +63,16 @@ public class PasswordManagerService {
     }
 
     public void addUser(User user) {
-        User userDBname = userRepository.findByName(user.getName());
+        User userDBname = userRepository.findByUsername(user.getUsername());
         if (userDBname != null) {
-            throw new ResourceAlreadyExistsException(user.getName(), "User with this name already exists");
+            throw new ResourceAlreadyExistsException(user.getUsername(), "User with this name already exists");
         }
         User userDBemail = userRepository.findByEmail(user.getEmail());
         if (userDBemail != null) {
             throw new ResourceAlreadyExistsException(user.getEmail(), "User with this email already exists");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setAuthority(Authorities.USER.toString());
         userRepository.save(user);
     }
 
@@ -84,11 +92,12 @@ public class PasswordManagerService {
         // Do not change the id, created date and user name
         user.setId(userDBname.getId());
         user.setCreatedDate(userDBname.getCreatedDate());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     private User getUserFromName(String name) {
-        User user = userRepository.findByName(name);
+        User user = userRepository.findByUsername(name);
         if (user == null) {
             throw new ResourceNotFoundException(name, "User not found");
         }
@@ -104,8 +113,7 @@ public class PasswordManagerService {
     }
 
     private void checkIfUserExists(String userName) {
-        // TODO: Remove when user authentication is handled
-        User user = userRepository.findByName(userName);
+        User user = userRepository.findByUsername(userName);
         if (user == null) {
             throw new ResourceNotFoundException(userName, "User not found");
         }
