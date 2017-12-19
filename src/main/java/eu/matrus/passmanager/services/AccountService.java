@@ -23,7 +23,7 @@ public class AccountService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User user = userRepository.findByName(s);
+        User user = userRepository.findByUsername(s);
         if (user == null) {
             throw new ResourceNotFoundException(s, "User with this name not found");
         }

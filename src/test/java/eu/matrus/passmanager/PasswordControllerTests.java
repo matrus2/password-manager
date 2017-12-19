@@ -10,10 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonBuilderFactory;
-import javax.json.JsonObject;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -21,108 +18,88 @@ public class PasswordControllerTests extends TestConfigurator {
 
 
     @Test
-    public void testGetPasswordsIfUserExists() throws JSONException, ParseException {
-
+    public void testGetPasswordsIfUserExists() throws JSONException, ParseException, IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userStandardName),
                 HttpMethod.GET, entity, String.class);
 
-        JsonBuilderFactory factory = Json.createBuilderFactory(null);
-        JsonArray expected = factory.createArrayBuilder()
-                .add(factory.createObjectBuilder()
-                        .add("name", "olx")
-                        .add("login", "test")
-                        .add("password", "test1")
-                        .add("url", "http://olx.pl"))
-                .add(factory.createObjectBuilder()
-                        .add("name", "allegro")
-                        .add("login", "test")
-                        .add("password", "test1")
-                        .add("url", "http://allegro.pl"))
-                .build();
-
-        JSONAssert.assertEquals(expected.toString(), response.getBody(), false);
+        JSONAssert.assertEquals(DataHelper.getPasswordsData().toString(), response.getBody(), false);
         Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
     @Test
-    public void testGetPasswordsIfUserNotExists() throws JSONException, ParseException {
-
+    public void testGetPasswordsIfUserNotExists() throws JSONException, ParseException, IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + USER_DOESNT_EXISTS),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userNotSavedName),
                 HttpMethod.GET, entity, String.class);
 
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
 
     @Test
-    public void testPostPasswordIfUserExists() {
-
-        JsonObject newPassword = Json.createObjectBuilder()
-                .add("name", "gumtree")
-                .add("login", "test")
-                .add("password", "test1")
-                .add("url", "http://gumtree.pl")
-                .build();
-
+    public void testPostPasswordIfUserExists() throws IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
         headers.add("Content-Type", "application/json");
-        HttpEntity<String> entity = new HttpEntity<>(newPassword.toString(), headers);
+        HttpEntity<String> entity = new HttpEntity<>(DataHelper.passwordNotInDB.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userStandardName),
                 HttpMethod.POST, entity, String.class);
 
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
-    public void testPostPasswordIfUserNotExists() {
-
-        JsonObject newPassword = Json.createObjectBuilder()
-                .add("name", "gumtree")
-                .add("login", "test")
-                .add("password", "test1")
-                .add("url", "http://gumtree.pl")
-                .build();
-
+    public void testPostPasswordIfUserNotExists() throws IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
         headers.add("Content-Type", "application/json");
-        HttpEntity<String> entity = new HttpEntity<>(newPassword.toString(), headers);
+        HttpEntity<String> entity = new HttpEntity<>(DataHelper.passwordNotInDB.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + USER_DOESNT_EXISTS),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userNotSavedName),
                 HttpMethod.POST, entity, String.class);
 
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
 
     @Test
-    public void testDeletePasswordsIfUserExist() throws JSONException {
+    public void testDeletePasswordsIfUserExist() throws JSONException, IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userStandardName),
                 HttpMethod.DELETE, entity, String.class);
 
         Assert.assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
         // Assert that there no passwords any more
         ResponseEntity<String> responseWithPass = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userStandardName),
                 HttpMethod.GET, entity, String.class);
 
         JSONAssert.assertEquals("[]", responseWithPass.getBody(), false);
     }
 
     @Test
-    public void testDeleteSinglePasswordIfUserAndPasswordExist() {
-        List<Password> userPasswords = passwordRepository.findByUserName(CORRECT_USER_NAME);
+    public void testDeleteSinglePasswordIfUserAndPasswordExist() throws IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
+        List<Password> userPasswords = passwordRepository.findByUserName(DataHelper.userStandardName);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME + "/" + userPasswords.get(1).getId()),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userStandardName + "/" + userPasswords.get(1).getId()),
                 HttpMethod.DELETE, entity, String.class);
 
         Assert.assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
@@ -130,53 +107,55 @@ public class PasswordControllerTests extends TestConfigurator {
 
 
     @Test
-    public void testDeleteSinglePasswordIfUserNotExists() {
+    public void testDeleteSinglePasswordIfUserNotExists() throws IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + USER_DOESNT_EXISTS + "/itdoesntmatter"),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userNotSavedName + "/itdoesntmatter"),
+                HttpMethod.DELETE, entity, String.class);
+
+        Assert.assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    public void testDeleteSinglePasswordIfUserExistsAndPasswordNotExists() throws IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userStandardName + "/d1d12d21d321d"),
                 HttpMethod.DELETE, entity, String.class);
 
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    public void testDeleteSinglePasswordIfUserExistsAndPasswordNotExists() {
+    public void testPutPasswordIfUserNotExists() throws IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME + "d1d12d21d321d"),
-                HttpMethod.DELETE, entity, String.class);
-
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    public void testPutPasswordIfUserNotExists() {
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + USER_DOESNT_EXISTS + "/itdoesntmatter"),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userNotSavedName + "/itdoesntmatter"),
                 HttpMethod.PUT, entity, String.class);
 
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    public void testPutPasswordIfUserExists() throws JSONException {
-        List<Password> userPasswords = passwordRepository.findByUserName(CORRECT_USER_NAME);
-        JsonObject newData = Json.createObjectBuilder()
-                .add("name", "whatever")
-                .add("login", "whatever")
-                .add("password", "whatever")
-                .add("url", "http://www.whatever.com")
-                .build();
+    public void testPutPasswordIfUserExists() throws JSONException, IOException {
+        String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);
+        headers.add("Authorization", "Bearer " + access);
+        List<Password> userPasswords = passwordRepository.findByUserName(DataHelper.userStandardName);
 
         headers.add("Content-Type", "application/json");
-        HttpEntity<String> entity = new HttpEntity<>(newData.toString(), headers);
+        HttpEntity<String> entity = new HttpEntity<>(DataHelper.passwordNotInDB.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(PASSWORD_ENDPOINT + CORRECT_USER_NAME + "/" + userPasswords.get(1).getId()),
+                createURLWithPort(PASSWORD_ENDPOINT + DataHelper.userStandardName + "/" + userPasswords.get(1).getId()),
                 HttpMethod.PUT, entity, String.class);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
