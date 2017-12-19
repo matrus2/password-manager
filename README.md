@@ -15,9 +15,10 @@ To be filled up.
 - [x] Introduce travis CI to run tests before merge in Github
 - [x] Controllers refactor - move logic to the respective services
 - [x] Data validation with tests
-- [ ] Handle PUT methods correctly
-- [ ] Handling passwords store
-- [ ] Introducing token based system to retrieve data (AWS API Gateway, Spring Security)
+- [x] Handling passwords store
+- [x] Introducing token based system to retrieve data (AWS API Gateway, Spring Security)
+- [ ] Change password via email
+- [ ] Encode the passwords
 - [ ] Cloud deployement setup
 - [ ] Continuous Delivery  
 ...
