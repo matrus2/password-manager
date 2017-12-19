@@ -18,6 +18,7 @@ To be filled up.
 - [x] Handling passwords store
 - [x] Introducing token based system to retrieve data (AWS API Gateway, Spring Security)
 - [ ] Change password via email
+- [ ] Encode the passwords
 - [ ] Cloud deployement setup
 - [ ] Continuous Delivery  
 ...

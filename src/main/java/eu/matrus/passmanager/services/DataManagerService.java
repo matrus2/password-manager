@@ -63,9 +63,9 @@ public class DataManagerService {
     }
 
     public void addUser(User user) {
-        User userDBname = userRepository.findByName(user.getName());
+        User userDBname = userRepository.findByUsername(user.getUsername());
         if (userDBname != null) {
-            throw new ResourceAlreadyExistsException(user.getName(), "User with this name already exists");
+            throw new ResourceAlreadyExistsException(user.getUsername(), "User with this name already exists");
         }
         User userDBemail = userRepository.findByEmail(user.getEmail());
         if (userDBemail != null) {
@@ -92,11 +92,12 @@ public class DataManagerService {
         // Do not change the id, created date and user name
         user.setId(userDBname.getId());
         user.setCreatedDate(userDBname.getCreatedDate());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     private User getUserFromName(String name) {
-        User user = userRepository.findByName(name);
+        User user = userRepository.findByUsername(name);
         if (user == null) {
             throw new ResourceNotFoundException(name, "User not found");
         }
@@ -112,8 +113,7 @@ public class DataManagerService {
     }
 
     private void checkIfUserExists(String userName) {
-        // TODO: Remove when user authentication is handled
-        User user = userRepository.findByName(userName);
+        User user = userRepository.findByUsername(userName);
         if (user == null) {
             throw new ResourceNotFoundException(userName, "User not found");
         }
