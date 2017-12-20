@@ -19,6 +19,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Base64Utils;
@@ -43,6 +46,8 @@ public abstract class TestConfigurator {
     private String clientId;
     @Value("${security.oauth2.client.client-secret}")
     private String secret;
+    @Value("${security.encrypt.secret-key}")
+    private String secretKey;
     TestRestTemplate restTemplate = new TestRestTemplate();
     HttpHeaders headers = new HttpHeaders();
     @LocalServerPort
@@ -58,12 +63,13 @@ public abstract class TestConfigurator {
                     passwordEncoder.encode(DataHelper.userStandardPassword),
                     new SimpleDateFormat("yyyy-MM-dd").parse("2014-11-23"));
             userAdmin.setAuthority(Authorities.USER.toString());
-
+            userAdmin.setSalt(DataHelper.userAdminSalt);
             userStandard = new User(DataHelper.userAdminName,
                     DataHelper.userAdminEmail,
                     passwordEncoder.encode(DataHelper.userAdminPassword),
                     new SimpleDateFormat("yyyy-MM-dd").parse("2014-11-23"));
             userStandard.setAuthority(Authorities.ADMIN.toString());
+            userStandard.setSalt(DataHelper.userStandardSalt);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -79,12 +85,13 @@ public abstract class TestConfigurator {
     private void saveUser(User user) {
         userRepository.save(user);
         List<Password> passwords = new ArrayList<>();
+        TextEncryptor encryptor = Encryptors.queryableText(secretKey, user.getSalt());
         DataHelper.passwords.forEach(password ->
                 passwords.add(new Password(
                         password.get("name"),
                         user.getUsername(),
                         password.get("login"),
-                        password.get("password"),
+                        encryptor.encrypt(password.get("password")),
                         password.get("url"))));
 
         passwordRepository.save(passwords);
