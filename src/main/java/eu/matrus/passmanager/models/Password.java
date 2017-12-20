@@ -28,7 +28,6 @@ public class Password {
     private String login;
 
     @NotEmpty(message = "Password cannot be null")
-    @Size(max = 70, message = "Password cannot exceed 60 chars")
     private String password;
 
     @URL(message = "Url must be valid")
