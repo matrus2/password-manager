@@ -10,10 +10,12 @@ abstract class DataHelper {
     static String userStandardName = "adam";
     static String userStandardPassword = "adamadam";
     static String userStandardEmail = "adam@adam.pl";
+    static String userStandardSalt = "9d0545c63e322475";
 
     static String userAdminName = "pawel";
     static String userAdminPassword = "pawelpawel";
     static String userAdminEmail = "pawel@pawel.pl";
+    static String userAdminSalt = "d303e6ab8af7e61f";
 
     static String userNotSavedName = "maciej";
 

@@ -42,6 +42,9 @@ public class User implements UserDetails {
     private String password;
 
     @JsonIgnore
+    private String salt;
+
+    @JsonIgnore
     @CreatedDate
     private Date createdDate;
 
