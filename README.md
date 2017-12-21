@@ -1,24 +1,21 @@
 [![Build Status](https://travis-ci.org/matrus2/password-manager.svg?branch=master)](https://travis-ci.org/matrus2/password-manager) [![Coverage Status](https://coveralls.io/repos/github/matrus2/password-manager/badge.svg?branch=master)](https://coveralls.io/github/matrus2/password-manager?branch=master)
 
-##Passwords and Contacts Manager
+##Passwords Manager
 
-To be filled up.
+####Usage instructions:
 
-### TODOs
+1. Ensure that MongoDB server is running locally on port 27018;
+2. Inject sample data to DB by invoking:
+    ```$java
+    mongorestore --port 27018  dump
+    ```
+3. Download and install JCE Policy:
 
-- [x] User model and Controller
-- [x] Password model and Controller, integration with user
-- [x] Setup for integration tests
-- [x] Run tests in embedded environment
-- [x] Remaining integration tests for UserController
-- [x] Integration tests for passwordController
-- [x] Introduce travis CI to run tests before merge in Github
-- [x] Controllers refactor - move logic to the respective services
-- [x] Data validation with tests
-- [x] Handling passwords store
-- [x] Introducing token based system to retrieve data (AWS API Gateway, Spring Security)
-- [ ] Change password via email
-- [ ] Encode the passwords
-- [ ] Cloud deployement setup
-- [ ] Continuous Delivery  
-...
+    ```
+    http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html
+    ```
+4. Run application:
+    ```$xslt
+    mvn spring-boot:run  
+    ```
+    

@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +31,7 @@ public class User implements UserDetails {
     @NotEmpty
     @Indexed(unique = true)
     @Size(max = 60, message = "Name cannot be null or exceeds 60 chars")
+    @Pattern(regexp = "^[a-z0-9]+$", message = "Login must be alphanumeric with no spaces and lowercase.")
     private String username;
 
     @NotEmpty
