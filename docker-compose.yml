@@ -1,0 +1,13 @@
+version: '3'
+services:
+  passmanager:
+    build: .
+    image: passmanager
+    ports:
+      - "8080:8080"
+    environment:
+      - PASS_DB_NAME=${PASS_DB_NAME}
+      - PASS_MONGO_HOST=${PASS_MONGO_HOST}
+      - PASS_OAUTH2_CLIENT_ID=${PASS_OAUTH2_CLIENT_ID}
+      - PASS_OAUTH2_CLIENT_SECRET=${PASS_OAUTH2_CLIENT_SECRET}
+      - PASS_ENCRYPT_SECRET_KEY=${PASS_ENCRYPT_SECRET_KEY}

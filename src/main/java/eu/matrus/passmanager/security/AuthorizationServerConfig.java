@@ -29,6 +29,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Value("${security.oauth2.client.client-secret}")
     private String secret;
 
+    @Value("${security.oauth2.resource.id}")
+    private String resourceId;
 
     @Autowired
     @Lazy
