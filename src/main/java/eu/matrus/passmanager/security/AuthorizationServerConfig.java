@@ -19,7 +19,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
 
@@ -28,7 +27,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Value("${security.oauth2.client.client-secret}")
     private String secret;
-
 
     @Autowired
     @Lazy
