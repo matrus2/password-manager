@@ -21,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
-import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Base64Utils;
@@ -42,14 +41,14 @@ public abstract class TestConfigurator {
     UserRepository userRepository;
     @Autowired
     PasswordRepository passwordRepository;
+    TestRestTemplate restTemplate = new TestRestTemplate();
+    HttpHeaders headers = new HttpHeaders();
     @Value("${security.oauth2.client.client-id}")
     private String clientId;
     @Value("${security.oauth2.client.client-secret}")
     private String secret;
     @Value("${security.encrypt.secret-key}")
     private String secretKey;
-    TestRestTemplate restTemplate = new TestRestTemplate();
-    HttpHeaders headers = new HttpHeaders();
     @LocalServerPort
     private String port;
     private User userAdmin;
