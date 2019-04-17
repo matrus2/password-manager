@@ -46,6 +46,7 @@ public class UserControllerTests extends TestConfigurator {
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
+/*
     @Test
     public void testPostSingleUserIfNotExists() {
         headers.add("Content-Type", "application/json");
@@ -68,7 +69,7 @@ public class UserControllerTests extends TestConfigurator {
 
         Assert.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     }
-
+*/
     @Test
     public void testPutSingleUserIfExists() throws IOException {
         String access = getAccessToken(DataHelper.userStandardName, DataHelper.userStandardPassword);

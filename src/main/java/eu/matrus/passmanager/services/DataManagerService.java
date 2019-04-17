@@ -75,6 +75,7 @@ public class DataManagerService {
     }
 
     public void addUser(User user) {
+        /*
         User userDBname = userRepository.findByUsername(user.getUsername());
         if (userDBname != null) {
             throw new ResourceAlreadyExistsException(user.getUsername(), "User with this name already exists");
@@ -87,6 +88,8 @@ public class DataManagerService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setAuthority(Authorities.USER.toString());
         userRepository.save(user);
+        */
+        return true;
     }
 
     public User getUser(String userName) {
